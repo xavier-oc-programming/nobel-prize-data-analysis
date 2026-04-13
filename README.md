@@ -45,17 +45,20 @@ data/nobel_prize_data.csv
         ▼
 pd.read_csv('../data/nobel_prize_data.csv')  →  df_data
         │
+        │  ── CLEAN ──────────────────────────────────────────────────────
         ├── .isna().sum()               →  identify missing values per column
         ├── pd.to_datetime(birth_date)  →  datetime dtype
         ├── prize_share.str.split('/')  →  share_pct (float, 0–100)
         ├── year − birth_date.dt.year   →  winning_age (int)
         │
+        │  ── AGGREGATE ──────────────────────────────────────────────────
         ├── .value_counts()             →  prizes per category / org / city
         ├── .groupby().agg(count)       →  prizes by country, category
         ├── .groupby().cumsum()         →  cumulative prizes per country over time
         ├── .rolling(window=5).mean()   →  5-year moving average
         ├── pd.merge()                  →  join category breakdown → top-20 countries
         │
+        │  ── VISUALISE ──────────────────────────────────────────────────
         ├── px.pie / px.bar             →  gender split, category counts
         ├── px.choropleth               →  world map of prizes
         ├── px.sunburst                 →  country → city → organisation drill-down

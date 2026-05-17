@@ -1,0 +1,40 @@
+title: Nobel Prize Data Analysis
+slug: nobel-prize-data-analysis
+category: data
+date: 2026-05-17
+featured: false
+tags: data-analysis, visualisation, python, CI-CD
+tech_stack: Python, pandas, NumPy, Matplotlib, Seaborn, Plotly, Jupyter, GitHub Actions
+repo_url: https://github.com/xavier-oc-programming/nobel-prize-data-analysis
+live_url: https://xavier-oc-programming.github.io/nobel-prize-data-analysis/notebook_web_render/
+demo_url:
+notebook_url: https://xavier-oc-programming.github.io/nobel-prize-data-analysis/notebook_web_render/
+
+short_description: |
+  The United States holds 281 Nobel Prizes — more than twice the UK total. This analysis maps 120 years of prize data across gender, country, research institution, and laureate age to surface the structural patterns behind who wins and why.
+
+full_description: |
+  Starting from a single CSV of 962 prize records spanning 1901 to 2023, this analysis asks who wins the Nobel Prize, where they come from, and whether those patterns have changed over 120 years. It covers the gender split across all six categories, identifies which countries and research institutions dominate, and tracks how the volume and distribution of prizes have evolved over time.
+
+  The findings are concrete: women hold just 6.2% of individual prizes, with Physics the starkest gap at 4 out of 216. The United States has 281 prizes — more than the UK and Germany combined. The average laureate is 60 at the time of the award, but a LOWESS regression shows that number has risen by 8–10 years over the century, suggesting prizes increasingly recognise work done decades earlier. Six winners received the prize more than once; Marie Curie is the only person to win in two different scientific categories.
+
+problem: |
+  The Nobel Prize record is one of the longest-running, most complete datasets of scientific and cultural achievement. Despite its prestige, the aggregate patterns — who wins, where they come from, whether the prize has become more or less equitable, whether laureates are older now than they were — are rarely examined quantitatively across the full 120-year span.
+
+solution: |
+  The analysis loads and cleans the raw laureate CSV, parsing birth dates, computing prize share percentages, and deriving winning age at the time of the award. Aggregations using groupby, cumsum, and 5-year rolling averages surface temporal trends. Visualisations are produced with three complementary libraries: Plotly for interactive charts (choropleth, sunburst, bar), Matplotlib for trend overlays with dual axes, and Seaborn for statistical plots (histplot, regplot with LOWESS, boxplot, lmplot). A GitHub Actions workflow renders the notebook to HTML on every push and deploys it to GitHub Pages.
+
+challenges: |
+  - Choosing the right country column: birth_country reflects historical borders (e.g. "Russian Empire"), while birth_country_current normalises to present-day names. Using the wrong one inflates some countries and silently suppresses others — the analysis uses birth_country_current throughout and documents the trade-off.
+  - The age trend required careful interpretation. A rising mean could reflect survivorship bias (older laureates living longer to receive delayed recognition) or genuine shifts in how the committees evaluate careers. The LOWESS line surfaces the trend without overfitting to outliers like Goodenough (97) or Yousafzai (17).
+  - Seaborn's lmplot creates its own FacetGrid figure outside Matplotlib's standard figure management, requiring a different approach to static export than the other chart types.
+
+results: |
+  - The United States leads with 281 prizes — 29% of all individual prizes in the dataset.
+  - Women account for 6.2% of individually tracked prizes (58 of 934).
+  - Physics has the lowest female share of any category: 4 out of 216 prizes.
+  - The average winning age is approximately 60; 75% of laureates are under 69 at the time of the award.
+  - Winning ages have risen by roughly 8–10 years over the full 120-year span.
+  - Six individuals or organisations have won the prize more than once.
+  - The Economics prize, first awarded in 1969, has the fewest prizes of any category (86) and the highest US concentration.
+  - Both World Wars produced visible dips in annual prize counts, clearest in the 5-year rolling average.

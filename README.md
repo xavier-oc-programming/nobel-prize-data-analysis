@@ -1,30 +1,38 @@
+![Python](https://img.shields.io/badge/Python-3.9+-blue)
+![pandas](https://img.shields.io/badge/pandas-2.0+-blue)
+![NumPy](https://img.shields.io/badge/NumPy-1.24+-blue)
+![Matplotlib](https://img.shields.io/badge/Matplotlib-3.7+-orange)
+![Seaborn](https://img.shields.io/badge/Seaborn-0.12+-orange)
+![Plotly](https://img.shields.io/badge/Plotly-5.14+-purple)
+![Jupyter](https://img.shields.io/badge/Jupyter-7.0+-orange)
+![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-CI%2FCD-black)
+
 # Nobel Prize Data Analysis
 
-Analyses 120+ years of Nobel Prize data to uncover trends in gender, country, research institutions, and laureate age using Plotly, Matplotlib, and Seaborn.
+The United States accounts for 281 Nobel Prizes — more than twice the United Kingdom's 105 — and that dominance only solidified after 1945. This analysis traces 120+ years of Nobel Prize data to map where prizes are won, who wins them, and how the patterns have shifted across gender, geography, age, and category.
 
-This project explores the Nobel Prize dataset from 1901 onwards to answer a series of questions about the history and patterns of one of the world's most prestigious awards. It investigates the gender split across all categories, identifies which countries dominate the prize, tracks the growth in awards over time, and examines whether laureates are winning at an older age today than they were a century ago.
+The dataset covers 962 individual prize shares from 1901 to 2023. It is cleaned and enriched at runtime: birth dates are parsed to datetime, prize fractions (e.g. `1/2`) are converted to percentages, and a `winning_age` column is computed for each laureate. Aggregations using `groupby`, `cumsum`, and 5-year rolling averages then surface the structural trends underneath the headline numbers.
 
-The dataset is a curated CSV file covering individual laureate records, including birth country, affiliated research institution, prize category, year of award, and prize share. After loading, the data is cleaned — handling NaN values and type conversions — and enriched with two computed columns: `share_pct` (the laureate's share as a decimal percentage) and `winning_age` (the laureate's age in the year of the award). Aggregations are performed with `groupby`, `cumsum`, and rolling averages to surface trends.
-
-No external APIs or credentials are required. All data is bundled in `data/nobel_prize_data.csv`.
+Women hold approximately 6.2% of all prizes — 58 out of the 934 individual laureates with sex recorded. The gap is widest in Physics, where only 4 of 216 prizes went to women, and narrowest in Peace and Literature. The average laureate is 60 years old at the time of the award; the youngest ever was Malala Yousafzai at 17, the oldest John Goodenough at 97.
 
 ---
 
 ## Table of Contents
 
-1. [Quick start](#1-quick-start)
-2. [Analysis flow](#2-analysis-flow)
-3. [Features](#3-features)
-4. [Dataset schema](#4-dataset-schema)
+1. [Quick Start](#1-quick-start)
+2. [Analysis Flow](#2-analysis-flow)
+3. [Key Findings](#3-key-findings)
+4. [Dataset Schema](#4-dataset-schema)
 5. [Architecture](#5-architecture)
-6. [Notebook reference](#6-notebook-reference)
-7. [Configuration reference](#7-configuration-reference)
-8. [Course context](#8-course-context)
+6. [Visualisations](#6-visualisations)
+7. [Operations Reference](#7-operations-reference)
+8. [Background](#8-background)
 9. [Dependencies](#9-dependencies)
+10. [Portfolio Integration](#10-portfolio-integration)
 
 ---
 
-## 1. Quick start
+## 1. Quick Start
 
 ```bash
 git clone https://github.com/xavier-oc-programming/nobel-prize-data-analysis.git
@@ -33,17 +41,17 @@ pip install -r requirements.txt
 jupyter notebook
 ```
 
-Open `practice/A_01_Full_Analysis.ipynb` to run the complete analysis. For lesson notes and method explanations, start with `theory/00__Overview.ipynb`.
+Open `notebooks/analysis/A_01_Full_Analysis.ipynb` to run the complete analysis. Concept notes and method explanations are in `notebooks/concepts/`.
 
 ---
 
-## 2. Analysis flow
+## 2. Analysis Flow
 
 ```
 data/nobel_prize_data.csv
         │
         ▼
-pd.read_csv('../data/nobel_prize_data.csv')  →  df_data
+pd.read_csv('../../data/nobel_prize_data.csv')  →  df_data
         │
         │  ── CLEAN ──────────────────────────────────────────────────────
         ├── .isna().sum()               →  identify missing values per column
@@ -69,47 +77,22 @@ pd.read_csv('../data/nobel_prize_data.csv')  →  df_data
 
 ---
 
-## 3. Features
+## 3. Key Findings
 
-**Gender & firsts**
-- Donut chart: percentage of prizes won by men vs. women
-- First 3 female laureates identified with year, category, and birth country
-
-**Repeat winners**
-- All individuals who won the Nobel Prize more than once, with categories and years
-
-**Prize categories**
-- Total prizes awarded per category (bar chart, colour scale)
-- Male/female split per category (stacked bar chart)
-- Year the Economics prize was first awarded
-
-**Trends over time**
-- Prizes awarded per year with 5-year rolling average (Matplotlib scatter + line)
-- Average prize share per year with 5-year rolling average on a secondary axis
-
-**Countries**
-- Top 20 countries by total prizes (horizontal bar chart)
-- Prizes per country broken down by category (stacked horizontal bar)
-- World choropleth map coloured by prize count
-- Cumulative prizes over time for the top 10 countries (line chart)
-
-**Research institutions & cities**
-- Top 20 organisations by laureate count (horizontal bar)
-- Top 20 organisation cities (horizontal bar)
-- Top 20 laureate birth cities (horizontal bar)
-- Sunburst chart: country → city → organisation breakdown
-
-**Laureate age**
-- Descriptive statistics for winning age (youngest, oldest, average, 75th percentile)
-- Distribution histogram (Seaborn histplot)
-- Age over time with LOWESS trend line (Seaborn regplot)
-- Age distribution per category (Seaborn boxplot)
-- Per-category age trend lines (Seaborn lmplot, one chart per category)
-- Combined trend lines for all categories (Seaborn lmplot with hue)
+- **US dominance**: The United States has 281 prizes — 29% of all individual prizes. It overtook Germany and the UK as the cumulative leader during the post-WWII period and has extended that lead every decade since.
+- **Gender gap**: 58 of 934 individually tracked prizes went to women (6.2%). Peace and Literature show the highest female share; Physics has the lowest at 4 out of 216.
+- **Female firsts**: Marie Curie (Physics, 1903) was the first woman to win; all three early female laureates were born in countries that no longer exist under those names — Russian Empire, Austrian Empire, Sweden.
+- **Repeat winners**: Six winners have received the prize more than once — including Marie Curie (Physics 1903, Chemistry 1911) and Linus Pauling (Chemistry 1954, Peace 1962).
+- **Prize inflation**: The number of annual prizes has risen over time, driven largely by more prizes being shared. The average laureate share has fallen as the number of co-recipients increased.
+- **World Wars**: Both World War I and World War II produced clear dips in the number of prizes awarded, visible in the rolling average chart.
+- **Research geography**: Harvard University and the University of Chicago are the two leading affiliated institutions. New York is the top laureate birth city in the dataset.
+- **Laureate age**: The average winning age is approximately 60. The LOWESS trend line shows laureates were around 55–57 at the time of the award in the early 20th century and now trend closer to 65–70 — suggesting prizes increasingly recognise work done decades earlier.
+- **Category ages**: Physics and Chemistry have the highest average winning ages; Peace has the widest spread and the longest "whiskers" in the boxplot.
+- **Economics**: The Economics prize was not part of Alfred Nobel's original 1895 will. It was first awarded in 1969 to Jan Tinbergen and Ragnar Frisch and has the fewest total prizes (86) of any category.
 
 ---
 
-## 4. Dataset schema
+## 4. Dataset Schema
 
 ### `data/nobel_prize_data.csv`
 
@@ -146,70 +129,83 @@ pd.read_csv('../data/nobel_prize_data.csv')  →  df_data
 ```
 nobel-prize-data-analysis/
 │
-├── theory/                            # Lesson notes — annotated methods, no raw exercises
-│   ├── 00__Overview.ipynb             # Day goals and project overview
-│   ├── 01__Loading_and_Cleaning.ipynb # Package setup, data exploration, type conversion
-│   ├── 02__Plotly_Charts.ipynb        # Donut chart, bar charts, gender/category analysis
-│   ├── 03__Matplotlib_Trends.ipynb    # Scatter + rolling average, dual y-axes
-│   ├── 04__Choropleth_and_Countries.ipynb  # Top countries, choropleth map, cumulative lines
-│   ├── 05__Sunburst_Charts.ipynb      # Research institutions, cities, sunburst drill-down
-│   ├── 06__Age_Analysis.ipynb         # Winning age distribution, trends, category comparison
-│   └── 07__Summary.ipynb              # Learning points and method recap
+├── notebooks/
+│   ├── analysis/
+│   │   └── A_01_Full_Analysis.ipynb       # Complete end-to-end analysis notebook
+│   └── concepts/
+│       ├── 00__Overview.ipynb             # Project overview and goals
+│       ├── 01__Loading_and_Cleaning.ipynb # Data exploration, type conversion
+│       ├── 02__Plotly_Charts.ipynb        # Donut chart, bar charts, gender/category analysis
+│       ├── 03__Matplotlib_Trends.ipynb    # Scatter + rolling average, dual y-axes
+│       ├── 04__Choropleth_and_Countries.ipynb  # Top countries, choropleth map, cumulative lines
+│       ├── 05__Sunburst_Charts.ipynb      # Research institutions, cities, sunburst drill-down
+│       ├── 06__Age_Analysis.ipynb         # Winning age distribution, trends, category comparison
+│       └── 07__Summary.ipynb              # Key method recap
 │
-├── practice/                          # Student's actual analysis code
-│   └── A_01_Full_Analysis.ipynb       # Complete end-to-end analysis notebook
+├── data/
+│   └── nobel_prize_data.csv               # Nobel Prize laureates 1901–2023 (~270 KB)
 │
-├── data/                              # Seed dataset
-│   └── nobel_prize_data.csv           # Nobel Prize laureates 1901–2023 (~270 KB)
+├── plots/                                 # All charts saved at 150 dpi
+│
+├── notebook_web_render/
+│   └── index.html                         # Rendered notebook (outputs only, no code)
 │
 ├── docs/
-│   └── COURSE_NOTES.md                # Exercise brief and key methods
+│   └── COURSE_NOTES.md
 │
-├── requirements.txt                   # Pinned package versions
+├── .github/
+│   └── workflows/
+│       └── publish_notebook.yml           # Auto-renders notebook on push
+│
+├── requirements.txt
 ├── .gitignore
 └── README.md
 ```
 
 ---
 
-## 6. Notebook reference
+## 6. Visualisations
 
-### theory/
+All charts are saved to `plots/` at 150 dpi.
 
-| Notebook | Key methods covered | Question answered |
-|----------|--------------------|--------------------|
-| 00__Overview.ipynb | — | What does this project build? |
-| 01__Loading_and_Cleaning.ipynb | `pd.read_csv`, `.isna()`, `.duplicated()`, `pd.to_datetime`, `str.split` | How is the data structured and cleaned? |
-| 02__Plotly_Charts.ipynb | `px.pie`, `px.bar`, `.value_counts`, `.groupby().agg` | Gender split; prizes per category; male/female by category |
-| 03__Matplotlib_Trends.ipynb | `.rolling().mean()`, `ax.twinx()`, `np.arange` | Are more prizes awarded over time? Are they more shared? |
-| 04__Choropleth_and_Countries.ipynb | `px.choropleth`, `px.bar`, `pd.merge`, `.cumsum()`, `px.line` | Which countries dominate? When did the US eclipse others? |
-| 05__Sunburst_Charts.ipynb | `px.sunburst`, `.value_counts` | Which institutions and cities produce the most laureates? |
-| 06__Age_Analysis.ipynb | `.dt.year`, `.describe()`, `sns.histplot`, `sns.regplot`, `sns.boxplot`, `sns.lmplot` | Age distribution; oldest/youngest; age trends by category |
-| 07__Summary.ipynb | — | What were the key learning points? |
-
-### practice/
-
-| Notebook | Key methods covered | Question answered |
-|----------|--------------------|--------------------|
-| A_01_Full_Analysis.ipynb | All of the above | Complete Nobel Prize analysis — all questions |
+| File | Description |
+|------|-------------|
+| `gender_split_donut.png` | Donut chart: male vs. female prize share (%) |
+| `prizes_per_category.png` | Bar chart: total prizes by category |
+| `gender_by_category.png` | Stacked bar: male/female split per category |
+| `prizes_per_year.png` | Scatter + 5-year rolling average: prizes per year |
+| `prizes_per_year_with_share.png` | Dual-axis: prizes per year and average prize share |
+| `top20_countries.png` | Horizontal bar: top 20 countries by total prizes |
+| `world_choropleth.png` | Choropleth map: prizes by birth country |
+| `categories_by_country.png` | Stacked horizontal bar: category breakdown by country |
+| `cumulative_prizes_by_country.png` | Line chart: cumulative prizes over time, top 10 countries |
+| `top20_organisations.png` | Horizontal bar: top 20 research institutions |
+| `top20_org_cities.png` | Horizontal bar: top 20 organisation cities |
+| `top20_birth_cities.png` | Horizontal bar: top 20 laureate birth cities |
+| `sunburst_country_city_org.png` | Sunburst: country → city → organisation drill-down |
+| `winning_age_distribution.png` | Histogram: age distribution at time of award |
+| `winning_age_over_time.png` | Regression plot with LOWESS: age trend 1901–2023 |
+| `winning_age_by_category_boxplot.png` | Boxplot: age distribution per category |
+| `winning_age_by_category_lmplot.png` | Grid of LOWESS lines: one panel per category |
+| `winning_age_all_categories_lmplot.png` | Combined LOWESS lines: all six categories overlaid |
 
 ---
 
-## 7. Configuration reference
+## 7. Operations Reference
 
 | Value | Location | Description |
 |-------|----------|-------------|
-| `'../data/nobel_prize_data.csv'` | `practice/A_01_Full_Analysis.ipynb` cell 9 | Relative path to dataset from practice/ |
-| `pd.options.display.float_format = '{:,.2f}'.format` | practice notebook cell 7 | Display floats with 2 decimal places and comma separator |
-| `rolling(window=5)` | practice notebook cells 53, 56 | 5-year window for moving averages |
-| `np.arange(1900, 2021, step=5)` | practice notebook cell 54 | X-axis tick marks every 5 years |
-| `figsize=(16, 8), dpi=200` | practice notebook cells 54, 57 | Standard figure size for Matplotlib charts |
-| `color_continuous_scale='Aggrnyl'` | practice notebook cell 45 | Colour scale for prize-per-category bar chart |
-| `color_continuous_scale=px.colors.sequential.matter` | practice notebook cell 67 | Colour scale for choropleth map |
+| `'../../data/nobel_prize_data.csv'` | `notebooks/analysis/A_01_Full_Analysis.ipynb` | Relative path to dataset |
+| `pd.options.display.float_format = '{:,.2f}'.format` | analysis notebook | Display floats with 2 decimal places |
+| `rolling(window=5)` | analysis notebook | 5-year window for moving averages |
+| `np.arange(1900, 2021, step=5)` | analysis notebook | X-axis tick marks every 5 years |
+| `figsize=(16, 8), dpi=200` | analysis notebook | Standard figure size for Matplotlib charts |
+| `color_continuous_scale='Aggrnyl'` | analysis notebook | Colour scale for prize-per-category bar chart |
+| `color_continuous_scale=px.colors.sequential.matter` | analysis notebook | Colour scale for choropleth map |
 
 ---
 
-## 8. Course context
+## 8. Background
 
 100 Days of Code: The Complete Python Pro Bootcamp — Day 79 — Data visualisation with Plotly, Matplotlib, and Seaborn.
 
@@ -221,9 +217,28 @@ See [docs/COURSE_NOTES.md](docs/COURSE_NOTES.md) for the full exercise brief and
 
 | Module | Used in | Purpose |
 |--------|---------|---------|
-| pandas | practice/, theory/ | Data loading, cleaning, aggregation |
-| numpy | practice/ | Tick mark arrays, type handling |
-| matplotlib | practice/, theory/03 | Scatter plots, rolling average overlays, dual axes |
-| seaborn | practice/, theory/06 | Histplot, regplot, boxplot, lmplot |
-| plotly | practice/, theory/02–05 | Interactive bar, pie, choropleth, sunburst, line charts |
+| pandas | notebooks/ | Data loading, cleaning, aggregation |
+| numpy | analysis notebook | Tick mark arrays, type handling |
+| matplotlib | analysis notebook, concepts/03 | Scatter plots, rolling average overlays, dual axes |
+| seaborn | analysis notebook, concepts/06 | Histplot, regplot, boxplot, lmplot |
+| plotly | analysis notebook, concepts/02–05 | Interactive bar, pie, choropleth, sunburst, line charts |
+| kaleido | analysis notebook | Static image export for Plotly charts |
 | notebook | all | Jupyter notebook runtime |
+
+---
+
+## 10. Portfolio Integration
+
+Rendered notebook (outputs and charts only, no code):
+https://xavier-oc-programming.github.io/nobel-prize-data-analysis/notebook_web_render/
+
+Regenerated automatically via GitHub Actions on every commit to `notebooks/analysis/A_01_Full_Analysis.ipynb`.
+
+To regenerate manually:
+
+```bash
+jupyter nbconvert --to html --no-input \
+  --output index.html \
+  notebooks/analysis/A_01_Full_Analysis.ipynb
+mv index.html notebook_web_render/index.html
+```

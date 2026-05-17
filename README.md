@@ -145,7 +145,7 @@ nobel-prize-data-analysis/
 ├── data/
 │   └── nobel_prize_data.csv               # Nobel Prize laureates 1901–2023 (~270 KB)
 │
-├── plots/                                 # All charts saved at 150 dpi
+├── plots/                                 # Plotly charts as .html; Matplotlib/Seaborn as .png at 150 dpi
 │
 ├── notebook_web_render/
 │   └── index.html                         # Rendered notebook (outputs only, no code)
@@ -166,28 +166,28 @@ nobel-prize-data-analysis/
 
 ## 6. Visualisations
 
-All charts are saved to `plots/` at 150 dpi.
+Plotly charts are saved as interactive `.html`; Matplotlib/Seaborn charts as `.png` at 150 dpi.
 
-| File | Description |
-|------|-------------|
-| `gender_split_donut.png` | Donut chart: male vs. female prize share (%) |
-| `prizes_per_category.png` | Bar chart: total prizes by category |
-| `gender_by_category.png` | Stacked bar: male/female split per category |
-| `prizes_per_year.png` | Scatter + 5-year rolling average: prizes per year |
-| `prizes_per_year_with_share.png` | Dual-axis: prizes per year and average prize share |
-| `top20_countries.png` | Horizontal bar: top 20 countries by total prizes |
-| `world_choropleth.png` | Choropleth map: prizes by birth country |
-| `categories_by_country.png` | Stacked horizontal bar: category breakdown by country |
-| `cumulative_prizes_by_country.png` | Line chart: cumulative prizes over time, top 10 countries |
-| `top20_organisations.png` | Horizontal bar: top 20 research institutions |
-| `top20_org_cities.png` | Horizontal bar: top 20 organisation cities |
-| `top20_birth_cities.png` | Horizontal bar: top 20 laureate birth cities |
-| `sunburst_country_city_org.png` | Sunburst: country → city → organisation drill-down |
-| `winning_age_distribution.png` | Histogram: age distribution at time of award |
-| `winning_age_over_time.png` | Regression plot with LOWESS: age trend 1901–2023 |
-| `winning_age_by_category_boxplot.png` | Boxplot: age distribution per category |
-| `winning_age_by_category_lmplot.png` | Grid of LOWESS lines: one panel per category |
-| `winning_age_all_categories_lmplot.png` | Combined LOWESS lines: all six categories overlaid |
+| File | Type | Description |
+|------|------|-------------|
+| `gender_split_donut.html` | Plotly | Donut chart: male vs. female prize share (%) |
+| `prizes_per_category.html` | Plotly | Bar chart: total prizes by category |
+| `gender_by_category.html` | Plotly | Stacked bar: male/female split per category |
+| `top20_countries.html` | Plotly | Horizontal bar: top 20 countries by total prizes |
+| `world_choropleth.html` | Plotly | Choropleth map: prizes by birth country |
+| `categories_by_country.html` | Plotly | Stacked horizontal bar: category breakdown by country |
+| `cumulative_prizes_by_country.html` | Plotly | Line chart: cumulative prizes over time, top 10 countries |
+| `top20_organisations.html` | Plotly | Horizontal bar: top 20 research institutions |
+| `top20_org_cities.html` | Plotly | Horizontal bar: top 20 organisation cities |
+| `top20_birth_cities.html` | Plotly | Horizontal bar: top 20 laureate birth cities |
+| `sunburst_country_city_org.html` | Plotly | Sunburst: country → city → organisation drill-down |
+| `prizes_per_year.png` | Matplotlib | Scatter + 5-year rolling average: prizes per year |
+| `prizes_per_year_with_share.png` | Matplotlib | Dual-axis: prizes per year and average prize share |
+| `winning_age_distribution.png` | Seaborn | Histogram: age distribution at time of award |
+| `winning_age_over_time.png` | Seaborn | Regression plot with LOWESS: age trend 1901–2023 |
+| `winning_age_by_category_boxplot.png` | Seaborn | Boxplot: age distribution per category |
+| `winning_age_by_category_lmplot.png` | Seaborn | Grid of LOWESS lines: one panel per category |
+| `winning_age_all_categories_lmplot.png` | Seaborn | Combined LOWESS lines: all six categories overlaid |
 
 ---
 
